@@ -1,0 +1,385 @@
+{
+  "modules": [
+    {
+      "id": "m1",
+      "title": "Qubit Basics",
+      "learn": [
+        {
+          "type": "md",
+          "text": "### What is a qubit?\nA classical bit is either **0** or **1**. A **qubit** can be in a **superposition** of |0⟩ and |1⟩:\n\n|ψ⟩ = α|0⟩ + β|1⟩ with |α|² + |β|² = 1. This normalization gives measurement probabilities (Born rule).\n"
+        },
+        {
+          "type": "md",
+          "text": "### Quick Dirac refresher\n|0⟩ = [1, 0]^T, |1⟩ = [0, 1]^T. We often write qubit states as vectors.\nA **global phase** e^{iφ}|ψ⟩ is not observable—it does not change measurement statistics.\n"
+        },
+        {
+          "type": "md",
+          "text": "### Bloch-sphere intuition\nAny single-qubit pure state lies on the Bloch sphere: north ≈ |0⟩, south ≈ |1⟩, equator ≈ |+⟩ or |-⟩.\nThe **Hadamard (H)** gate maps |0⟩ to the equator: |0⟩ → |+⟩.\n"
+        },
+        {
+          "type": "demo_statevector",
+          "id": "m1_demo_h",
+          "text": "Demo: |0⟩ → H → |+⟩ (statevector & probabilities)"
+        },
+        {
+          "type": "task",
+          "id": "m1_t1",
+          "text": "Task: apply **H** to |0⟩ and observe the measurement histogram.",
+          "action": {
+            "preset_circuit": [
+              {
+                "gate": "H",
+                "targets": [
+                  0
+                ]
+              },
+              {
+                "gate": "Measure"
+              }
+            ],
+            "n_qubits": 1,
+            "shots": 1024
+          }
+        },
+        {
+          "type": "quiz_mcq",
+          "id": "m1_q1",
+          "question": "After H on |0⟩, what are p(0) and p(1)?",
+          "options": [
+            "≈0.5, ≈0.5",
+            "≈1.0, ≈0.0",
+            "≈0.0, ≈1.0"
+          ],
+          "answer_index": 0,
+          "explain_correct": "H maps |0⟩ to |+⟩ = (|0⟩+|1⟩)/√2, which yields ~50/50.",
+          "explain_wrong": "Because |+⟩ has equal amplitudes, measurement in Z-basis gives equal probabilities."
+        },
+        {
+          "type": "quiz_mcq",
+          "id": "m1_q2",
+          "question": "Which gate sends **|+⟩** back to **|0⟩**?",
+          "options": [
+            "H",
+            "X",
+            "Z",
+            "RX(π)"
+          ],
+          "answer_index": 0,
+          "explain_correct": "H is its own inverse (H·H = I). |0⟩→|+⟩ and |+⟩→|0⟩.",
+          "explain_wrong": "X, Z flip around different axes; RX(π) is equivalent to X (up to phase)."
+        },
+        {
+          "type": "md",
+          "text": "### Measurement basics\nWe measure here in the **computational (Z) basis**. If we changed to **X-basis**, |+⟩ would be measured almost certainly as |+⟩.\nIncreasing shots (e.g., 1024 → 4096) stabilizes the histogram but does not remove hardware noise.\n"
+        },
+        {
+          "type": "md",
+          "text": "### Common pitfalls\n• The statevector **before** measurement differs from the **post-measurement** classical outcome.\n• **Global phase** is not observable.\n• Target-state checks should use **fidelity** |⟨ψ|φ⟩|².\n"
+        },
+        {
+          "type": "bloch_demo",
+          "id": "m1_bloch",
+          "text": "Bloch sphere: visualize |0⟩ → H → |+⟩."
+        },
+        {
+          "type": "task_param",
+          "id": "m1_t2",
+          "text": "Practice: choose θ for RY(θ) so that p(0) ≈ 0.70.",
+          "action": {
+            "n_qubits": 1,
+            "param_gate": "RY",
+            "target_qubit": 0,
+            "shots": 1024,
+            "target_p0": 0.7,
+            "tolerance": 0.05
+          }
+        }
+      ],
+      "challenge": {
+        "id": "m1_c1",
+        "description": "Using only single-qubit gates, prepare **|+⟩** (target is the pre-measurement state).",
+        "target_state": "plus",
+        "n_qubits": 1,
+        "constraints": {
+          "max_gates": 3
+        },
+        "success_fidelity": 0.98
+      }
+    },
+    {
+      "id": "m2",
+      "title": "Single-Qubit Gates: X, Y, Z and Rotations",
+      "learn": [
+        {
+          "type": "md",
+          "text": "### Overview\nWe study Pauli gates **X, Y, Z** and rotation gates **RX, RY, RZ**.\n• X flips |0⟩↔|1⟩. \n• Z adds a relative phase between |0⟩ and |1⟩ (no change in Z-basis probabilities).\n• RX/RY/RZ rotate the Bloch vector around x/y/z axes by angle θ.\n"
+        },
+        {
+          "type": "demo_ops",
+          "id": "m2_d1",
+          "text": "Demo: X on |0⟩ → |1⟩ (statevector & probabilities).",
+          "action": {
+            "n_qubits": 1,
+            "ops": [
+              {
+                "gate": "X",
+                "targets": [
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "demo_ops",
+          "id": "m2_d2",
+          "text": "Demo: Z on |+⟩ gives |−⟩ (prepare |+⟩ via H, then Z).",
+          "action": {
+            "n_qubits": 1,
+            "ops": [
+              {
+                "gate": "H",
+                "targets": [
+                  0
+                ]
+              },
+              {
+                "gate": "Z",
+                "targets": [
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "bloch_demo",
+          "id": "m2_bloch",
+          "text": "Bloch sphere: visualize RY(θ) sweeping on |0⟩ (equator at θ=π/2)."
+        },
+        {
+          "type": "task_param",
+          "id": "m2_t1",
+          "text": "Practice: choose θ for RY(θ) so that p(1) ≈ 0.25.",
+          "action": {
+            "n_qubits": 1,
+            "param_gate": "RY",
+            "target_qubit": 0,
+            "shots": 1024,
+            "target_p0": 0.75,
+            "tolerance": 0.05
+          }
+        },
+        {
+          "type": "quiz_mcq",
+          "id": "m2_q1",
+          "question": "Which gate flips |0⟩ to |1⟩ in the Z-basis?",
+          "options": [
+            "X",
+            "Z",
+            "H",
+            "RZ(π)"
+          ],
+          "answer_index": 0,
+          "explain_correct": "X acts like a classical NOT in the computational basis.",
+          "explain_wrong": "Z adds phase; H changes basis; RZ adds phase only."
+        },
+        {
+          "type": "quiz_mcq",
+          "id": "m2_q2",
+          "question": "Which operation can change the relative phase without changing Z-basis probabilities?",
+          "options": [
+            "RZ(θ)",
+            "RX(θ)",
+            "RY(θ)",
+            "X"
+          ],
+          "answer_index": 0,
+          "explain_correct": "RZ rotates around the Z-axis; Z-basis probabilities stay the same.",
+          "explain_wrong": "RX/RY move off the Z-axis; X flips populations."
+        }
+      ],
+      "challenge": {
+        "id": "m2_c1",
+        "description": "Prepare **|−⟩ = (|0⟩−|1⟩)/√2** using single-qubit gates (pre-measurement target).",
+        "target_state": "minus",
+        "n_qubits": 1,
+        "constraints": {
+          "max_gates": 4
+        },
+        "success_fidelity": 0.98
+      }
+    },
+    {
+      "id": "m3",
+      "title": "Measurement & Statistics",
+      "learn": [
+        {
+          "type": "md",
+          "text": "### Why shots matter\nMeasurement results are sampled. More **shots** reduce statistical fluctuation of the histogram but do not remove hardware noise.\n"
+        },
+        {
+          "type": "task",
+          "id": "m3_t1",
+          "text": "Task: Prepare |+⟩ = H|0⟩ and compare histograms with 128 vs 4096 shots.",
+          "action": {
+            "preset_circuit": [
+              {
+                "gate": "H",
+                "targets": [
+                  0
+                ]
+              },
+              {
+                "gate": "Measure"
+              }
+            ],
+            "n_qubits": 1,
+            "shots": 128
+          }
+        },
+        {
+          "type": "task",
+          "id": "m3_t2",
+          "text": "Run the same circuit with higher shots to see the distribution stabilize.",
+          "action": {
+            "preset_circuit": [
+              {
+                "gate": "H",
+                "targets": [
+                  0
+                ]
+              },
+              {
+                "gate": "Measure"
+              }
+            ],
+            "n_qubits": 1,
+            "shots": 4096
+          }
+        },
+        {
+          "type": "task_param",
+          "id": "m3_t3",
+          "text": "Practice: Tune θ for RY(θ) so that p(0) ≈ 0.60 (±0.05).",
+          "action": {
+            "n_qubits": 1,
+            "param_gate": "RY",
+            "target_qubit": 0,
+            "shots": 1024,
+            "target_p0": 0.6,
+            "tolerance": 0.05
+          }
+        },
+        {
+          "type": "quiz_mcq",
+          "id": "m3_q1",
+          "question": "Increasing the number of shots...",
+          "options": [
+            "reduces statistical variance of estimates",
+            "eliminates device noise",
+            "changes the true probabilities",
+            "adds global phase"
+          ],
+          "answer_index": 0,
+          "explain_correct": "More samples yield tighter confidence around the same underlying probabilities.",
+          "explain_wrong": "Shots do not change physics nor remove hardware noise."
+        }
+      ],
+      "challenge": {
+        "id": "m3_c1",
+        "description": "Create a single-qubit circuit with p(0) ≈ 0.25 (pre-measurement design, evaluated by sampling).",
+        "target_state": "p0_0.25",
+        "n_qubits": 1,
+        "constraints": {
+          "max_gates": 3
+        },
+        "success_fidelity": 0.0
+      }
+    },
+    {
+      "id": "m4",
+      "title": "Two-Qubit Systems & Entanglement (CX, CZ)",
+      "learn": [
+        {
+          "type": "md",
+          "text": "### Controlled gates and entanglement\n**CX** (CNOT) flips the target if control is |1⟩. Combining H on qubit 0 then CX(0,1) creates a **Bell state** |Φ⁺⟩ = (|00⟩+|11⟩)/√2 with perfect correlations.\n"
+        },
+        {
+          "type": "demo_ops",
+          "id": "m4_d1",
+          "text": "Demo: Prepare |Φ⁺⟩ with H on q0 then CX(q0→q1).",
+          "action": {
+            "n_qubits": 2,
+            "ops": [
+              {
+                "gate": "H",
+                "targets": [
+                  0
+                ]
+              },
+              {
+                "gate": "CX",
+                "targets": [
+                  0,
+                  1
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "task",
+          "id": "m4_t1",
+          "text": "Task: Measure the Bell circuit and observe correlated outcomes (00 and 11).",
+          "action": {
+            "preset_circuit": [
+              {
+                "gate": "H",
+                "targets": [
+                  0
+                ]
+              },
+              {
+                "gate": "CX",
+                "targets": [
+                  0,
+                  1
+                ]
+              },
+              {
+                "gate": "Measure"
+              }
+            ],
+            "n_qubits": 2,
+            "shots": 1024
+          }
+        },
+        {
+          "type": "quiz_mcq",
+          "id": "m4_q1",
+          "question": "Which sequence creates |Φ⁺⟩ from |00⟩?",
+          "options": [
+            "H on q0, then CX(q0→q1)",
+            "X on q1",
+            "Z on q0",
+            "RX(π) on q0"
+          ],
+          "answer_index": 0,
+          "explain_correct": "H puts q0 in superposition; CX copies the control into the target, entangling them.",
+          "explain_wrong": "The others do not entangle |00⟩ into |Φ⁺⟩."
+        }
+      ],
+      "challenge": {
+        "id": "m4_c1",
+        "description": "Prepare **|Φ⁺⟩ = (|00⟩+|11⟩)/√2** using single- and two-qubit gates (pre-measurement target).",
+        "target_state": "phi_plus",
+        "n_qubits": 2,
+        "constraints": {
+          "max_gates": 4
+        },
+        "success_fidelity": 0.98
+      }
+    }
+  ]
+}
